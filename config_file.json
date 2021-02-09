@@ -1,0 +1,38 @@
+{
+
+	"soundname": "Pop",
+	"samplerate": 16000,
+	"numVariations": 2,
+	"soundDuration": 4,
+	"outPath": "DripFiles",
+	"recordFormat": "params",
+	"paramRange": "Natural",
+	"params":
+	[
+		{
+			"pname": "rate",
+			"minval": 0,
+			"maxval": 1,
+			"nvals": 2,
+			"units": "rate = 2*exp",
+			"formula": "2**args[0]"
+		},
+		{
+			"pname": "irreg",
+			"minval": 0,
+			"maxval": 1,
+			"nvals": 2,
+			"units": "sd = irregularity/events per second",
+			"formula": ".04*10**args[0]/args[1]"
+		},
+		{
+			"pname": "cf",	
+			"minval": 140,
+    		"maxval": 440,
+	    	"nvals": 2,
+			"nargs": 1,
+	    	"units": "Frequency",
+			"formula": "440**args[0]"
+		}
+	]
+}
