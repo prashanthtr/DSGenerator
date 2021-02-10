@@ -11,9 +11,9 @@ class PatternSynth(SI.MySoundModel) :
 
                 SI.MySoundModel.__init__(self)
 		#create a dictionary of the parameters this synth will use
-                self.__addParam__("cf_exp", 55, 220, cf,
+                self.__addParam__("cf", 55, 220, cf,
 			lambda v :
-				self.evSynth.setParam('cf_exp', v))
+				self.evSynth.setParam('cf', v))
                 self.__addParam__("sweep", 55, 220, sweep,
 			lambda v :
                                 self.evSynth.setParam('sweep', v))
@@ -24,8 +24,8 @@ class PatternSynth(SI.MySoundModel) :
 			          lambda v :
 				  self.evSynth.setParam('ampRange', v))
 
-                self.__addParam__("rate_exp", -10, 10, rate_exp)
-                self.__addParam__("irreg_exp", .1, 50, irreg_exp)
+                self.__addParam__("rate", -10, 10, rate_exp)
+                self.__addParam__("irreg", .1, 50, irreg_exp)
 
                 self.evSynth=MyDrip(cf,sweep, startAmp, ampRange)
 
@@ -33,7 +33,7 @@ class PatternSynth(SI.MySoundModel) :
 		Override of base model method
 	'''
 	def generate(self,  durationSecs) :
-                elist=SI.noisySpacingTimeList(self.getParam("rate_exp"), self.getParam("irreg_exp"), durationSecs)
+                elist=SI.noisySpacingTimeList(self.getParam("rate"), self.getParam("irreg"), durationSecs)
                 return self.elist2signal(elist, durationSecs)
 
 
@@ -45,7 +45,7 @@ class PatternSynth(SI.MySoundModel) :
                         startsamp=int(round(nf*self.sr))%numSamples
                         # create some deviation in center frequency
                         cfsd = 1
-                        perturbedf0 = self.getParam("cf_exp")*np.power(2,np.random.normal(scale=cfsd)/12)
+                        perturbedf0 = self.getParam("cf")*np.power(2,np.random.normal(scale=cfsd)/12)
                         #perturbedf1 = self.getParam("f1")*np.power(2,np.random.normal(scale=cfsd)/12)
 
                         #self.evSynth.setParam("cf", perturbedf0)

@@ -22,7 +22,7 @@ class MyDrip(SI.MySoundModel) :
         def __init__(self, cf=220, sweep=110, startAmp=0.5, ampRange=0.25) :
                 SI. MySoundModel.__init__(self)
                 #create a dictionary of the parameters this synth will use
-                self.__addParam__("cf_exp", 110, 440, cf)
+                self.__addParam__("cf", 110, 440, cf)
                 self.__addParam__("sweep", 55, 220, sweep)
                 self.__addParam__("startAmp",0.05, 2, startAmp)
                 self.__addParam__("ampRange",0, 1, ampRange)
@@ -41,7 +41,7 @@ class MyDrip(SI.MySoundModel) :
 
                 '''Interface level parameters'''
                 # notation for this method
-                cf=self.getParam("cf_exp")
+                cf=self.getParam("cf")
                 sweep =self.getParam("sweep")
                 startAmp = self.getParam("startAmp")
                 ampRange = self.getParam("ampRange")

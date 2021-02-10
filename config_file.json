@@ -2,17 +2,17 @@
 
 	"soundname": "Pop",
 	"samplerate": 16000,
-	"numVariations": 2,
+	"chunkSecs": 2,
 	"soundDuration": 4,
 	"outPath": "DripFiles",
-	"recordFormat": "params",
+	"recordFormat": "sonyGan",
 	"paramRange": "Natural",
 	"params":
 	[
 		{
 			"pname": "rate",
-			"minval": 0,
-			"maxval": 1,
+			"minval": 0.25,
+			"maxval": 0.5,
 			"nvals": 2,
 			"units": "rate = 2*exp",
 			"formula": "2**args[0]"
