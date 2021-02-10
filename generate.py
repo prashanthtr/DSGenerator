@@ -65,12 +65,21 @@ def get_arguments():
     parser.add_argument("--configfile", required=True)
     return parser.parse_args()
 
+def folderConsistency():
+    if not os.path.isdir('Data'):
+        os.mkdir('Data') 
+
+    if not os.path.isdir('soundModels'):
+        os.mkdir('soundModels') 
+
 def main():
 
     loadSoundModels()
+    folderConsistency()
 
     args = get_arguments()
     module_name = args.configfile # here, the result is the file name, e.g. config or config-special
+    # data_path = args.datapath
 
     # Not use __import__, use import_module instead according to @bruno desthuilliers's suggestion
     # __import__(module_name) # here, dynamic load the config module
@@ -110,7 +119,13 @@ def generate(MyConfig):
     
     '''Initializes file through a filemanager'''
     fileHandle = fileHandler()
+    datapath = "Data/"+ MyConfig["outPath"]
+    dirpath = "soundModels/"+ MyConfig["soundname"]
 
+    if os.path.isdir(datapath):
+        print("Outpath exists")
+    else:
+        os.mkdir(datapath)
 
     print("Enumerating parameter combinations..")
 
@@ -163,13 +178,13 @@ def generate(MyConfig):
 
                     '''Write wav'''
                     wavName = fileHandle.makeName(MyConfig["soundname"], paramArr, userP, v)
-                    wavPath = fileHandle.makeFullPath(MyConfig["outPath"],wavName,".wav")
+                    wavPath = fileHandle.makeFullPath(datapath,wavName,".wav")
                     chunkedAudio = SI.selectVariation(barsig, MyConfig["samplerate"], v, MyConfig["chunkSecs"])
                     sf.write(wavPath, chunkedAudio, MyConfig["samplerate"])
 
                     '''Write params'''
                     paramName = fileHandle.makeName(MyConfig["soundname"], paramArr, userP, v)
-                    pfName = fileHandle.makeFullPath(MyConfig["outPath"], paramName,".params")
+                    pfName = fileHandle.makeFullPath(datapath, paramName,".params")
 
                     if MyConfig["recordFormat"] == "params" or MyConfig["recordFormat"]==0:
                         pm=paramManager.paramManager(pfName, fileHandle.getFullPath())
@@ -194,7 +209,7 @@ def generate(MyConfig):
                                 
                     elif MyConfig["recordFormat"] == "sonyGan" or MyConfig["recordFormat"] == 1:
                         
-                        sg = sonyGanJson.SonyGanJson("soundModels/"+MyConfig['soundname']+"/",1, 16000, MyConfig['soundname'])
+                        sg = sonyGanJson.SonyGanJson(dirpath,datapath, 1, 16000, MyConfig['soundname'])
                         sg.storeSingleRecord(wavName)
                         for pnum in range(len(paramArr)):
                             sg.addParams(wavName, paramArr[pnum]['pname'], userP[pnum], barsynth.getParam(paramArr[pnum]['pname']))
