@@ -2,7 +2,7 @@ import numpy as np
 import math
 
 from genericsynth import synthInterface as SI
-from soundModels.Drip.MyDrip import MyDrip  # This is "event" synthesizer this pattern synth will use
+from soundModels.Drip.MyDrip import MySoundModel  # This is "event" synthesizer this pattern synth will use
 
 ################################################################################################################
 class PatternSynth(SI.MySoundModel) :
@@ -27,7 +27,7 @@ class PatternSynth(SI.MySoundModel) :
                 self.__addParam__("rate", -10, 10, rate_exp)
                 self.__addParam__("irreg", .1, 50, irreg_exp)
 
-                self.evSynth=MyDrip(cf,sweep, startAmp, ampRange)
+                self.evSynth=MySoundModel(cf,sweep, startAmp, ampRange)
 
 	'''
 		Override of base model method

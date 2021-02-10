@@ -17,7 +17,7 @@ from genericsynth import synthInterface as SI
 4. A synthesizer loop runs through the parameter values for a specified duration to generate drip audio samples
 '''
 
-class MyDrip(SI.MySoundModel) :
+class MySoundModel(SI.MySoundModel) :
 
         def __init__(self, cf=220, sweep=110, startAmp=0.5, ampRange=0.25) :
                 SI. MySoundModel.__init__(self)

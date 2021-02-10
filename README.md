@@ -15,6 +15,16 @@ python3 -m pip install -r requirements.txt --src '.' (use Python3 command before
 
 >> python3 generate.py --configfile config_file.json
 
+# Exploring Synth models
+
+>> pip install jupyter
+
+>> python3 -m ipykernel install --user --name DSGenerator
+
+>> jupyter notebook
+
+>> Select TextureVisualization-notebook.ipynb in the browser interface
+
 
 # WRITEUP
 

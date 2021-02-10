@@ -2,7 +2,7 @@ import numpy as np
 import math
 
 from genericsynth import synthInterface as SI
-from soundModels.Pop.myPop import MyPop  # This is "event" synthesizer this pattern synth will use
+from soundModels.Pop.myPop import MySoundModel  # This is "event" synthesizer this pattern synth will use
 
 ################################################################################################################
 class PatternSynth(SI.MySoundModel) :
@@ -20,7 +20,7 @@ class PatternSynth(SI.MySoundModel) :
                 self.__addParam__("rate", -10, 10, rate_exp)
                 self.__addParam__("irreg", .1, 50, irreg_exp)
 
-                self.evSynth=MyPop(cf, Q)
+                self.evSynth=MySoundModel(cf, Q)
 
 	'''
 		Override of base model method

@@ -6,7 +6,7 @@ import math
 
 from genericsynth import synthInterface as SI
 
-class MyPop(SI.MySoundModel) :
+class MySoundModel(SI.MySoundModel) :
 
 	def __init__(self, f0=440, Q=10) :
 		SI.MySoundModel.__init__(self)
