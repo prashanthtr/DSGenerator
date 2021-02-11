@@ -26,6 +26,29 @@ python3 -m pip install -r requirements.txt --src '.' (use Python3 command before
 >> Select TextureVisualization-notebook.ipynb in the browser interface
 
 
+# Config File descriptions
+
+>> "soundname": Name of texture (E.g., Pop/Drip)
+
+>> "samplerate": Sample rate of output texture files (Def. 16000)
+
+>> "chunkSecs": Duraiton of smaller chunks for training (E.g.,2 second)
+
+>> "soundDuration": Duration of total sound file (e.g., 4seconds)
+
+>> "outPath": Target directory for placing data files (sound and parameter files). [E.g., "PopFiles"]
+
+>> "recordFormat": The format of the output parameter records in string (e.g., "params", "sonyGan", "Tfrecords")
+
+>> "paramRange": Normalized(Norm) or Natural(Natural) ranges for parameter interpolation.
+	Examples of Interpretations:
+	- Norm: Map from 0 to 1 to 400 to 600 in natural range
+	- Natural: Map from 400 to 600 to 400 to 600 in natural range
+	- Norm: Map from 0 to 1 to 0.4 to 0.6 which is 400 to 600 units in natural range.
+	XX: ALl ranges have to be within the synth description
+	XX: Use synthInterface to get ranges of current synth parameters.
+
+
 # WRITEUP
 
 '''
