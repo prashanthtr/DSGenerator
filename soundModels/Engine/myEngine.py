@@ -19,11 +19,11 @@ from genericsynth import synthInterface as SI
 
 class MySoundModel(SI.MySoundModel) :
 
-        def __init__(self, cf=40, sweep=40, startAmp=0.5, ampRange=0.25) :
+        def __init__(self, cf=4, sweep=10, startAmp=0.5, ampRange=0.25) :
                 SI. MySoundModel.__init__(self)
                 #create a dictionary of the parameters this synth will use
-                self.__addParam__("cf_exp", 20, 90, cf)
-                self.__addParam__("sweep", 0, 40, sweep)
+                self.__addParam__("cf", 4, 30, cf)
+                self.__addParam__("sweep", 0, 10, sweep)
 
         '''
         Override of base model method
@@ -35,29 +35,35 @@ class MySoundModel(SI.MySoundModel) :
         startAmp = initial amplitude
         ampRange = Range of starting amplitude
         '''
+
+        def sawtoothGeneration(self, n, samples):
+            period = math.floor(samples/n)
+            amp_env = SI.gesture(0.4,0.05, 0.6, period)
+            synth_out = []
+            numSamples = samples        # 1 second * 16000 sample rate
+            for p in range(n):
+                for index in range(period):
+                    A = amp_env[index]
+                    cutoff = 0.3 + 0.5*np.random.random()
+                    val = 2*abs(index/period - math.floor(index/period + cutoff))
+                    synth_out.append(val)
+            return synth_out
+
         def generate(self, sigLenSecs):
 
-                '''Interface level parameters'''
-                # notation for this method
-                cf=self.getParam("cf_exp")
-                sweep =self.getParam("sweep")
 
-                '''Synth variables'''
-                width = 0.95 + 0.05*np.random.rand()
-                phase = np.random.rand() * 2 * np.pi
-                frequency = cf + math.floor(np.random.rand()*sweep)
+            '''Interface level parameters'''
+            # notation for this method
+            cf=self.getParam("cf")
+            sweep =self.getParam("sweep")
 
-                '''Synth level parameters'''
-                cutOff = 0.45 + 0.15*np.random.random() # Duration of envelopes for DRIP
-                # phase_increment = 2 * math.pi * start_Hz / 16000     # phase increment per sample
-                numSamples = int(1 * 16000)        # 1 second * 16000 sample rate
-                phase = 0
-                phi = 0
-                synth_output = []
+            n_secs = 1
+            samples = int(n_secs*16000)
+            nInterp = 8+int(4*np.random.random()) #number of interpolating points
+            maxPoint = 0.4
+            freq_sweep = SI.genericGesture(cf, cf+sweep, maxPoint, nInterp) #odd number, 0.5 for equal cut off
+            # something about the duratin of the sound and the ratio (number of samples to peak) of the time to the peak value ~0.5
+            samplesPerFreq = int(samples/len(freq_sweep))
+            sig = np.concatenate([self.sawtoothGeneration(int(f),samplesPerFreq) for f in freq_sweep])
 
-                amp_env = SI.gesture(1, 0, cutOff,numSamples)
-                # freq_sweep = SI.gesture(cf, cf+sweep, cutOff, numSamples)
-                samples = np.linspace(0, 1, 16000)
-                engineSawtooth = amp_env*signal.sawtooth(2 * np.pi * frequency * samples + phase, width)
-
-                return engineSawtooth
+            return sig
