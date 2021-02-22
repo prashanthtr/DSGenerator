@@ -9,6 +9,11 @@ import math
 
 import librosa # conda install -c conda-forge librosa
 
+# make script paths from one level up avaialble for import
+script_path = os.path.realpath(os.path.dirname(__name__))
+os.chdir(script_path)
+sys.path.append(script_path)
+
 from parammanager import paramManager
 from sonyganformat import sonyGanJson
 #from Tf_record import tfrecordManager
@@ -65,16 +70,9 @@ def get_arguments():
     parser.add_argument("--configfile", required=True)
     return parser.parse_args()
 
-def folderConsistency():
-    if not os.path.isdir('Data'):
-        os.mkdir('Data') 
-
-    if not os.path.isdir('soundModels'):
-        os.mkdir('soundModels') 
-
 def main():
 
-    folderConsistency()
+    # folderConsistency()
 
     args = get_arguments()
     module_name = args.configfile # here, the result is the file name, e.g. config or config-special
@@ -99,7 +97,7 @@ def main():
     # print(MyConfig["params"])
 
 def loadSoundModels(MyConfig):
-    dirpath = "./"
+    dirpath = os.getcwd()
     # modules = [f for f in os.listdir(os.path.dirname(dirpath)) if f[0] != "." and f[0] != "_"]
     # for module in modules:
     spec = importlib.util.spec_from_file_location(dirpath, os.path.join(dirpath,"my" + MyConfig["soundname"] + "PatternSynth.py"))
