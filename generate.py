@@ -153,6 +153,7 @@ def generate(MyConfig):
     userParam = list(itertools.product(*userRange))
     synthParam = list(itertools.product(*synthRange))
 
+    sg = sonyGanJson.SonyGanJson(dirpath,datapath, 1, 16000, MyConfig['soundname'])
 
     for index in range(len(userParam)): # caretesian product of lists
 
@@ -208,7 +209,6 @@ def generate(MyConfig):
                                 
                     elif MyConfig["recordFormat"] == "sonyGan" or MyConfig["recordFormat"] == 1:
                         
-                        sg = sonyGanJson.SonyGanJson(dirpath,datapath, 1, 16000, MyConfig['soundname'])
                         sg.storeSingleRecord(wavName)
                         for pnum in range(len(paramArr)):
                             sg.addParams(wavName, paramArr[pnum]['pname'], userP[pnum], barsynth.getParam(paramArr[pnum]['pname']))
