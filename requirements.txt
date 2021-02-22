@@ -111,4 +111,4 @@ widgetsnbextension==3.5.1
 wrapt==1.12.1
 -e git+https://github.com/prashanthtr/paramManager#egg=paramManager
 -e git+https://github.com/prashanthtr/genericSynth@v.1.0.5#egg=genericSynth
--e git+https://github.com/prashanthtr/sonyGanFormat@v1.0.0#egg=sonyGanFormat
+-e git+https://github.com/prashanthtr/sonyGanFormat#egg=sonyGanFormat

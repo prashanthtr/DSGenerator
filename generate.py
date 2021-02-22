@@ -74,7 +74,6 @@ def folderConsistency():
 
 def main():
 
-    loadSoundModels()
     folderConsistency()
 
     args = get_arguments()
@@ -92,35 +91,37 @@ def main():
         for p in MyConfig['params']:
             p['formula'] = eval("lambda *args: " + p['formula'])
 
+    loadSoundModels(MyConfig)
+    
     # from args.configfile import MyConfig # <-- how is that possible?
     generate(MyConfig)
 
     # print(MyConfig["params"])
 
-def loadSoundModels():
-    dirpath = "soundModels/"
-    modules = [f for f in os.listdir(os.path.dirname(dirpath)) if f[0] != "." and f[0] != "_"]
-    for module in modules:
-        spec = importlib.util.spec_from_file_location(module, os.path.join(dirpath,module +"/my" + module + "PatternSynth.py"))
-        mod = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(mod)
-        soundModels[module] = mod
-        # mod_name = file[:-3]   # strip .py at the end
-        # exec('from soundModels' + ' import ' + os.path.abspath(mod_name))
+def loadSoundModels(MyConfig):
+    dirpath = "./"
+    # modules = [f for f in os.listdir(os.path.dirname(dirpath)) if f[0] != "." and f[0] != "_"]
+    # for module in modules:
+    spec = importlib.util.spec_from_file_location(dirpath, os.path.join(dirpath,"my" + MyConfig["soundname"] + "PatternSynth.py"))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    soundModels[MyConfig["soundname"]] = mod
+    # mod_name = file[:-3]   # strip .py at the end
+    # exec('from soundModels' + ' import ' + os.path.abspath(mod_name))
 
-        # files = [f for f in os.listdir(os.path.dirname(dirpath+module+"/")) if f[0] != "." and f[0] != "_"]
-        #for file in files:
-        #    spec = importlib.util.spec_from_file_location(module, os.path.join(dirpath,module +"/" + file))
-        #    mod = importlib.util.module_from_spec(spec)
-        #    spec.loader.exec_module(mod)
-        # importlib.import_module(dirpath + directory)
+    # files = [f for f in os.listdir(os.path.dirname(dirpath+module+"/")) if f[0] != "." and f[0] != "_"]
+    #for file in files:
+    #    spec = importlib.util.spec_from_file_location(module, os.path.join(dirpath,module +"/" + file))
+    #    mod = importlib.util.module_from_spec(spec)
+    #    spec.loader.exec_module(mod)
+    # importlib.import_module(dirpath + directory)
 
 def generate(MyConfig):
     
     '''Initializes file through a filemanager'''
     fileHandle = fileHandler()
-    datapath = "Data/"+ MyConfig["outPath"]
-    dirpath = "soundModels/"+ MyConfig["soundname"]
+    datapath = MyConfig["outPath"]
+    dirpath = "/"
 
     if os.path.isdir(datapath):
         print("Outpath exists")

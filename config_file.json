@@ -5,7 +5,7 @@
 	"chunkSecs": 2,
 	"soundDuration": 4,
 	"outPath": "PopFiles",
-	"recordFormat": "sonyGan",
+	"recordFormat": "params",
 	"paramRange": "Natural",
 	"params":
 	[
@@ -27,8 +27,8 @@
 		},
 		{
 			"pname": "cf",	
-			"minval": 140,
-    		"maxval": 440,
+			"minval": 440,
+    		"maxval": 880,
 	    	"nvals": 2,
 			"nargs": 1,
 	    	"units": "Frequency",
