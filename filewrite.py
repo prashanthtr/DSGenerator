@@ -1,6 +1,7 @@
 
 
 # loosely inspired from the parammanager
+# Takes a file name and path and returns a full path to file.
 import os
 
 class fileHandler():
