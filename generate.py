@@ -86,8 +86,10 @@ def main():
     with open(module_name) as json_file:
         MyConfig = json.load(json_file)
         print("Reading parameters for generating ", MyConfig['soundname'], " texture.. ")
-        for p in MyConfig['params']:
-            p['formula'] = eval("lambda *args: " + p['formula'])
+        # for p in MyConfig['params']:
+        #     p['formula'] = eval("lambda *args: " + p['formula'])
+        # for p in MyConfig['fixedParams']:
+        #     p['formula'] = eval("lambda *args: " + p['formula'])        
 
     loadSoundModels(MyConfig)
     
@@ -139,37 +141,51 @@ def generate(MyConfig):
     userRange = []
     synthRange = []
     paramArr = MyConfig["params"]
+    fixedParams = MyConfig["fixedParams"]
 
-    if MyConfig["paramRange"] == "Norm":
-        '''Create user and synth ranges for normalised parameters'''
-        [userRange.append(np.linspace(p["minval"], p["maxval"], p["nvals"], endpoint=True)) for p in MyConfig["params"]]
-        [synthRange.append(np.linspace(p["minval"], p["maxval"], p["nvals"], endpoint=True)) for p in MyConfig["params"]]
-            
-    else:
-        '''Create user and synth ranges for natural parameters'''
-        [userRange.append(np.linspace(p["minval"], p["maxval"], p["nvals"], endpoint=True)) for p in MyConfig["params"]]
-        [synthRange.append(np.linspace(p["minval"], p["maxval"], p["nvals"], endpoint=True)) for p in MyConfig["params"]]
+    for p in MyConfig["params"]:
+    
+        if p["synth_units"] == "norm":
+            userRange.append(np.linspace(p["user_minval"], p["user_maxval"], p["user_nvals"], endpoint=True))
+            synthRange.append(np.linspace(p["synth_minval"], p["synth_maxval"], p["user_nvals"], endpoint=True))
+        else: 
+            userRange.append(np.linspace(p["user_minval"], p["user_maxval"], p["user_nvals"], endpoint=True))
+            synthRange.append(np.linspace(p["synth_minval"], p["synth_maxval"], p["user_nvals"], endpoint=True))
+
     
     userParam = list(itertools.product(*userRange))
     synthParam = list(itertools.product(*synthRange))
 
     sg = sonyGanJson.SonyGanJson(dirpath,datapath, 1, 16000, MyConfig['soundname'])
 
+    '''Set fixed parameters prior to the generation'''
+    print(soundModels[MyConfig["soundname"]].PatternSynth)
+    barsynth=soundModels[MyConfig["soundname"]].PatternSynth()
+
+    for fixparams in fixedParams:
+
+        if fixparams["synth_units"] == "norm":
+            '''Setting in Normal ranges'''
+            barsynth.setParamNorm(fixparams["synth_pname"], fixparams["user_pval"])
+        else: 
+            '''Setting in natural ranges'''
+            barsynth.setParam(fixparams["synth_pname"], fixparams["user_pval"])
+    
+    '''Enumerate parameters'''
     for index in range(len(userParam)): # caretesian product of lists
 
+            '''Stepping through enumerated dataset'''
             userP = userParam[index]
             synthP = synthParam[index]
 
-            #set parameters
-            print(soundModels[MyConfig["soundname"]].PatternSynth)
-            barsynth=soundModels[MyConfig["soundname"]].PatternSynth()
-
-            if MyConfig["paramRange"] == "Norm":
-                '''Setting in Normal ranges'''
-                [barsynth.setParamNorm(paramArr[paramInd]["pname"], synthP[paramInd]) for paramInd in range(len(MyConfig["params"])) ]
-            else: 
-                '''Setting in natural ranges'''
-                [barsynth.setParam(paramArr[paramInd]["pname"], synthP[paramInd]) for paramInd in range(len(MyConfig["params"])) ]
+            for paramInd in range(len(MyConfig["params"])):
+            
+                if paramArr[paramInd]["synth_units"] == "norm":
+                    '''Setting in Normal ranges'''
+                    barsynth.setParamNorm(paramArr[paramInd]["synth_pname"], synthP[paramInd])
+                else: 
+                    '''Setting in natural ranges'''
+                    barsynth.setParam(paramArr[paramInd]["synth_pname"], synthP[paramInd])
             
             barsig=barsynth.generate(MyConfig["soundDuration"])
             numChunks=math.floor(MyConfig["soundDuration"]/MyConfig["chunkSecs"])  #Total duraton DIV duraiton of each chunk 
@@ -177,13 +193,13 @@ def generate(MyConfig):
             for v in range(numChunks):
 
                     '''Write wav'''
-                    wavName = fileHandle.makeName(MyConfig["soundname"], paramArr, userP, v)
+                    wavName = fileHandle.makeName(MyConfig["soundname"], paramArr, fixedParams, userP, v)
                     wavPath = fileHandle.makeFullPath(datapath,wavName,".wav")
                     chunkedAudio = SI.selectVariation(barsig, MyConfig["samplerate"], v, MyConfig["chunkSecs"])
                     sf.write(wavPath, chunkedAudio, MyConfig["samplerate"])
 
                     '''Write params'''
-                    paramName = fileHandle.makeName(MyConfig["soundname"], paramArr, userP, v)
+                    paramName = fileHandle.makeName(MyConfig["soundname"], paramArr, fixedParams, userP, v)
                     pfName = fileHandle.makeFullPath(datapath, paramName,".params")
 
                     if MyConfig["recordFormat"] == "params" or MyConfig["recordFormat"]==0:
@@ -192,26 +208,33 @@ def generate(MyConfig):
 
                         '''Write parameters and meta-parameters'''
                         for pnum in range(len(paramArr)):
-                                pm.addParam(pfName, paramArr[pnum]['pname'], [0,MyConfig["soundDuration"]], [userP[pnum], userP[pnum]], units=paramArr[pnum]['units'], nvals=paramArr[pnum]['nvals'], minval=paramArr[pnum]['minval'], maxval=paramArr[pnum]['maxval'], origUnits=None, origMinval=barsynth.getParam(paramArr[pnum]['pname'], "min"), origMaxval=barsynth.getParam(paramArr[pnum]['pname'], "max"))
-                                if MyConfig["paramRange"] == "Norm":
-                                    synthmin = barsynth.getParam(paramArr[pnum]['pname'], "min")
-                                    synthmax = barsynth.getParam(paramArr[pnum]['pname'], "max")
-                                    pm.addMetaParam(pfName, paramArr[pnum]['pname'], 
-                                        {
-                                        "user": "User maps parameters in Normalized units from 0-1 to " + str(paramArr[pnum]['minval']) + "-" + str(paramArr[pnum]['maxval']), 
-                                        "synth": "Synth maps parameters from " + str(paramArr[pnum]['minval']) + "-" + str(paramArr[pnum]['maxval']) + " to " + str(synthmin + paramArr[pnum]['minval']*(synthmax-synthmin)) + "-" + str(synthmin + paramArr[pnum]['maxval']*(synthmax-synthmin))
-                                        })
-                                else:
-                                    pm.addMetaParam(pfName, paramArr[pnum]['pname'], 
-                                        {"user": "User maps " + MyConfig["paramRange"] + " units from " + str(paramArr[pnum]['minval']) + "->" + str(paramArr[pnum]['maxval']), 
-                                        "synth": "Synth maps in " + MyConfig["paramRange"] + " units from " + str(paramArr[pnum]['minval']) + "->" + str(paramArr[pnum]['maxval'])
-                                        })
-                                
+                                pm.addParam(pfName, paramArr[pnum]['synth_pname'], [0,MyConfig["soundDuration"]], [userP[pnum], userP[pnum]], units=paramArr[pnum]['synth_units'], nvals=paramArr[pnum]['user_nvals'], minval=paramArr[pnum]['user_minval'], maxval=paramArr[pnum]['user_maxval'], origUnits=None, origMinval=paramArr[pnum]['synth_minval'], origMaxval=paramArr[pnum]['synth_maxval'])
+                                pm.addMetaParam(pfName, paramArr[pnum]['synth_pname'],paramArr[pnum]['user_doc']) 
+
+                        for pnum in range(len(fixedParams)):
+                            pm.addParam(pfName, fixedParams[pnum]['synth_pname'], [0,MyConfig["soundDuration"]], [fixedParams[pnum]["user_pval"], fixedParams[pnum]["user_pval"]], units=fixedParams[pnum]['synth_units'], nvals=2, minval=fixedParams[pnum]['user_minval'], maxval=fixedParams[pnum]['user_maxval'], origUnits=None, origMinval=fixedParams[pnum]['synth_minval'], origMaxval=fixedParams[pnum]['synth_maxval'])
+                            pm.addMetaParam(pfName, fixedParams[pnum]['synth_pname'],fixedParams[pnum]['user_doc']) 
+
+                                #     # barsynth.getParam(paramArr[pnum]['synth_pname'], "min"), origMaxval=barsynth.getParam(paramArr[pnum]['synth_pname'], "max"))
+                                # if paramArr[pnum]["synth_units"] == "norm":
+                                #     synthmin = barsynth.getParam(paramArr[pnum]['synth_pname'], "min")
+                                #     synthmax = barsynth.getParam(paramArr[pnum]['synth_pname'], "max")
+                                #     pm.addMetaParam(pfName, paramArr[pnum]['synth_pname'], 
+                                #         {
+                                #         "user": "User maps parameters in Normalized units from 0-1 to " + str(paramArr[pnum]['user_minval']) + "-" + str(paramArr[pnum]['user_maxval']), 
+                                #         "synth": "Synth maps parameters from " + str(paramArr[pnum]['synth_minval']) + "-" + str(paramArr[pnum]['synth_maxval']) + " to " + str(synthmin + paramArr[pnum]['synth_minval']*(synthmax-synthmin)) + "-" + str(synthmin + paramArr[pnum]['synth_maxval']*(synthmax-synthmin))
+                                #         })
+                                # else:
+                                #     pm.addMetaParam(pfName, paramArr[pnum]['synth_pname'],paramArr[pnum]['user_doc']) 
+                                #         # {"user": "User maps " + paramArr[pnum]["synth_units"] + " units from " + str(paramArr[pnum]['user_minval']) + "->" + str(paramArr[pnum]['user_maxval']), 
+                                #         # "synth": "Synth maps in " + paramArr[pnum]["synth_units"] + " units from " + str(paramArr[pnum]['synth_minval']) + "->" + str(paramArr[pnum]['synth_maxval'])
+                                #         # })
+
                     elif MyConfig["recordFormat"] == "sonyGan" or MyConfig["recordFormat"] == 1:
                         
                         sg.storeSingleRecord(wavName)
                         for pnum in range(len(paramArr)):
-                            sg.addParams(wavName, paramArr[pnum]['pname'], userP[pnum], barsynth.getParam(paramArr[pnum]['pname']))
+                            sg.addParams(wavName, paramArr[pnum]['synth_pname'], userP[pnum], barsynth.getParam(paramArr[pnum]['synth_pname']))
                         sg.write2File("sonyGan.json")
                     
                     else:
