@@ -33,9 +33,9 @@
 	"fixedParams":
 	[
 		{
-			"user_doc": "center frequency of sweep",
-            "synth_pname": "cf",
-            "synth_val": 400,
+			"user_doc": "rate of Pop sounds",
+            "synth_pname": "rate_exp",
+            "synth_val": 2,
             "synth_units": "natural"
 		}
 	]

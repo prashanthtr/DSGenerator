@@ -165,10 +165,10 @@ def generate(MyConfig):
 
         if fixparams["synth_units"] == "norm":
             '''Setting in Normal ranges'''
-            barsynth.setParamNorm(fixparams["synth_pname"], fixparams["user_pval"])
+            barsynth.setParamNorm(fixparams["synth_pname"], fixparams["synth_val"])
         else: 
             '''Setting in natural ranges'''
-            barsynth.setParam(fixparams["synth_pname"], fixparams["user_pval"])
+            barsynth.setParam(fixparams["synth_pname"], fixparams["synth_val"])
     
     '''Enumerate parameters'''
     for index in range(len(userParam)): # caretesian product of lists
@@ -211,7 +211,7 @@ def generate(MyConfig):
                                 pm.addMetaParam(pfName, paramArr[pnum]['synth_pname'],paramArr[pnum]['user_doc']) 
 
                         for pnum in range(len(fixedParams)):
-                            pm.addParam(pfName, fixedParams[pnum]['synth_pname'], [0,MyConfig["soundDuration"]], [fixedParams[pnum]["user_pval"], fixedParams[pnum]["user_pval"]], units=fixedParams[pnum]['synth_units'], nvals=2, minval=fixedParams[pnum]['user_minval'], maxval=fixedParams[pnum]['user_maxval'], origUnits=None, origMinval=fixedParams[pnum]['synth_minval'], origMaxval=fixedParams[pnum]['synth_maxval'])
+                            pm.addParam(pfName, fixedParams[pnum]['synth_pname'], [0,MyConfig["soundDuration"]], [fixedParams[pnum]["synth_val"], fixedParams[pnum]["synth_val"]], units=fixedParams[pnum]['synth_units'], nvals=2, origUnits=None)
                             pm.addMetaParam(pfName, fixedParams[pnum]['synth_pname'],fixedParams[pnum]['user_doc']) 
 
                                 #     # barsynth.getParam(paramArr[pnum]['synth_pname'], "min"), origMaxval=barsynth.getParam(paramArr[pnum]['synth_pname'], "max"))
