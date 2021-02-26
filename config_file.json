@@ -5,7 +5,6 @@
 	"chunkSecs": 2,
 	"soundDuration": 4,
 	"recordFormat": "params",
-	"filename": "myPopPatternSynth.py",
 	"params":
 	[
 		{
@@ -14,7 +13,7 @@
             "user_maxval": 1,
             "user_nvals": 4,
             "user_doc": "map to natural synth irregularity param [0, 1]",
-            "synth_pname": "irreg",
+            "synth_pname": "irreg_exp",
             "synth_minval": 0,
             "synth_maxval": 1,
             "synth_units": "natural"
@@ -34,15 +33,10 @@
 	"fixedParams":
 	[
 		{
-	        "user_pname": "rate",
-	        "user_pval": 0.6, 
-	        "user_minval": 0,
-	        "user_maxval": 1,
-	        "user_doc": "Parameter fixed at constant value 0.5 normalized. Mapped to [0.25 to 0.5]",
-	        "synth_pname": "rate",
-	        "synth_minval": 0.25,
-	        "synth_maxval": 0.5,
-	        "synth_units" :  "norm"
+			"user_doc": "center frequency of sweep",
+            "synth_pname": "cf",
+            "synth_val": 400,
+            "synth_units": "natural"
 		}
 	]
 }

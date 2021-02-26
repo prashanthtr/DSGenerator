@@ -80,7 +80,6 @@ def main():
     module_name = args.configfile # here, the result is the file name, e.g. config or config-special
     outputpath = args.outputpath
 
-
     # Not use __import__, use import_module instead according to @bruno desthuilliers's suggestion
     # __import__(module_name) # here, dynamic load the config module
     # MyConfig = sys.modules[module_name].MyConfig # here, get the MyConfig class
@@ -95,7 +94,8 @@ def main():
         #     p['formula'] = eval("lambda *args: " + p['formula'])        
 
     loadSoundModels(MyConfig)
-    
+    MyConfig["outputpath"] = outputpath
+
     # from args.configfile import MyConfig # <-- how is that possible?
     generate(MyConfig)
 
@@ -105,7 +105,7 @@ def loadSoundModels(MyConfig):
     dirpath = os.getcwd()
     # modules = [f for f in os.listdir(os.path.dirname(dirpath)) if f[0] != "." and f[0] != "_"]
     # for module in modules:
-    spec = importlib.util.spec_from_file_location(dirpath, os.path.join(dirpath,MyConfig["filename"]))
+    spec = importlib.util.spec_from_file_location(dirpath, os.path.join(dirpath,MyConfig["soundname"]+"PatternSynth.py"))
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     soundModels[MyConfig["soundname"]] = mod
@@ -125,10 +125,12 @@ def generate(MyConfig):
     fileHandle = fileHandler()
     # MyConfig["outPath"]
     dirpath = "/"
+    outputpath = MyConfig["outputpath"]
 
     if os.path.isdir(outputpath):
         print("Outpath exists")
     else:
+        print(outputpath)
         os.mkdir(outputpath)
 
     print("Enumerating parameter combinations..")
@@ -147,14 +149,9 @@ def generate(MyConfig):
     fixedParams = MyConfig["fixedParams"]
 
     for p in MyConfig["params"]:
-    
-        if p["synth_units"] == "norm":
             userRange.append(np.linspace(p["user_minval"], p["user_maxval"], p["user_nvals"], endpoint=True))
             synthRange.append(np.linspace(p["synth_minval"], p["synth_maxval"], p["user_nvals"], endpoint=True))
-        else: 
-            userRange.append(np.linspace(p["user_minval"], p["user_maxval"], p["user_nvals"], endpoint=True))
-            synthRange.append(np.linspace(p["synth_minval"], p["synth_maxval"], p["user_nvals"], endpoint=True))
-    
+        
     userParam = list(itertools.product(*userRange))
     synthParam = list(itertools.product(*synthRange))
 
