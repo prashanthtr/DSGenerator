@@ -13,7 +13,7 @@ python3 -m pip install -r requirements.txt --src '.' (use Python3 command before
 
 # Running DSGenerator
 
->> python3 DSGenerator/generate.py --configfile config_file.json
+>> python3 DSGenerator/generate.py --configfile config_file.json --outputpath MyPop
 
 DSGenerator has a default config file for generating popTextures. The code for popTexutres is available at 
 https://github.com/prashanthtr/popTextureDS
