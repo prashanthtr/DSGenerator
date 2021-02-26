@@ -4,8 +4,8 @@
 	"samplerate": 16000,
 	"chunkSecs": 2,
 	"soundDuration": 4,
-	"outPath": "PopFiles",
 	"recordFormat": "params",
+	"filename": "myPopPatternSynth.py",
 	"params":
 	[
 		{

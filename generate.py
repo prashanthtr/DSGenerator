@@ -64,10 +64,12 @@ import argparse
 
 myConfig = {}
 soundModels = {}
+outputpath = ""
 
 def get_arguments():
     parser = argparse.ArgumentParser(description="myParser")
     parser.add_argument("--configfile", required=True)
+    parser.add_argument("--outputpath", required=True)
     return parser.parse_args()
 
 def main():
@@ -76,7 +78,8 @@ def main():
 
     args = get_arguments()
     module_name = args.configfile # here, the result is the file name, e.g. config or config-special
-    # data_path = args.datapath
+    outputpath = args.outputpath
+
 
     # Not use __import__, use import_module instead according to @bruno desthuilliers's suggestion
     # __import__(module_name) # here, dynamic load the config module
@@ -102,7 +105,7 @@ def loadSoundModels(MyConfig):
     dirpath = os.getcwd()
     # modules = [f for f in os.listdir(os.path.dirname(dirpath)) if f[0] != "." and f[0] != "_"]
     # for module in modules:
-    spec = importlib.util.spec_from_file_location(dirpath, os.path.join(dirpath,"my" + MyConfig["soundname"] + "PatternSynth.py"))
+    spec = importlib.util.spec_from_file_location(dirpath, os.path.join(dirpath,MyConfig["filename"]))
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     soundModels[MyConfig["soundname"]] = mod
@@ -120,13 +123,13 @@ def generate(MyConfig):
     
     '''Initializes file through a filemanager'''
     fileHandle = fileHandler()
-    datapath = MyConfig["outPath"]
+    # MyConfig["outPath"]
     dirpath = "/"
 
-    if os.path.isdir(datapath):
+    if os.path.isdir(outputpath):
         print("Outpath exists")
     else:
-        os.mkdir(datapath)
+        os.mkdir(outputpath)
 
     print("Enumerating parameter combinations..")
 
@@ -151,12 +154,11 @@ def generate(MyConfig):
         else: 
             userRange.append(np.linspace(p["user_minval"], p["user_maxval"], p["user_nvals"], endpoint=True))
             synthRange.append(np.linspace(p["synth_minval"], p["synth_maxval"], p["user_nvals"], endpoint=True))
-
     
     userParam = list(itertools.product(*userRange))
     synthParam = list(itertools.product(*synthRange))
 
-    sg = sonyGanJson.SonyGanJson(dirpath,datapath, 1, 16000, MyConfig['soundname'])
+    sg = sonyGanJson.SonyGanJson(dirpath,outputpath, 1, 16000, MyConfig['soundname'])
 
     '''Set fixed parameters prior to the generation'''
     print(soundModels[MyConfig["soundname"]].PatternSynth)
@@ -194,13 +196,13 @@ def generate(MyConfig):
 
                     '''Write wav'''
                     wavName = fileHandle.makeName(MyConfig["soundname"], paramArr, fixedParams, userP, v)
-                    wavPath = fileHandle.makeFullPath(datapath,wavName,".wav")
+                    wavPath = fileHandle.makeFullPath(outputpath,wavName,".wav")
                     chunkedAudio = SI.selectVariation(barsig, MyConfig["samplerate"], v, MyConfig["chunkSecs"])
                     sf.write(wavPath, chunkedAudio, MyConfig["samplerate"])
 
                     '''Write params'''
                     paramName = fileHandle.makeName(MyConfig["soundname"], paramArr, fixedParams, userP, v)
-                    pfName = fileHandle.makeFullPath(datapath, paramName,".params")
+                    pfName = fileHandle.makeFullPath(outputpath, paramName,".params")
 
                     if MyConfig["recordFormat"] == "params" or MyConfig["recordFormat"]==0:
                         pm=paramManager.paramManager(pfName, fileHandle.getFullPath())
