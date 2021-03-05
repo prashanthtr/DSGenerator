@@ -105,7 +105,7 @@ def loadSoundModels(MyConfig):
     dirpath = os.getcwd()
     # modules = [f for f in os.listdir(os.path.dirname(dirpath)) if f[0] != "." and f[0] != "_"]
     # for module in modules:
-    spec = importlib.util.spec_from_file_location(dirpath, os.path.join(dirpath,MyConfig["soundname"]+"PatternSynth.py"))
+    spec = importlib.util.spec_from_file_location(dirpath, os.path.join(dirpath,MyConfig["soundname"]+".py"))
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     soundModels[MyConfig["soundname"]] = mod
@@ -158,7 +158,7 @@ def generate(MyConfig):
     sg = sonyGanJson.SonyGanJson(dirpath,outputpath, 1, 16000, MyConfig['soundname'])
 
     '''Set fixed parameters prior to the generation'''
-    print(soundModels[MyConfig["soundname"]].PatternSynth)
+    # print(soundModels[MyConfig["soundname"]].PatternSynth)
     barsynth=soundModels[MyConfig["soundname"]].PatternSynth()
 
     for fixparams in fixedParams:
@@ -208,11 +208,13 @@ def generate(MyConfig):
                         '''Write parameters and meta-parameters'''
                         for pnum in range(len(paramArr)):
                                 pm.addParam(pfName, paramArr[pnum]['synth_pname'], [0,MyConfig["soundDuration"]], [userP[pnum], userP[pnum]], units=paramArr[pnum]['synth_units'], nvals=paramArr[pnum]['user_nvals'], minval=paramArr[pnum]['user_minval'], maxval=paramArr[pnum]['user_maxval'], origUnits=None, origMinval=paramArr[pnum]['synth_minval'], origMaxval=paramArr[pnum]['synth_maxval'])
-                                pm.addMetaParam(pfName, paramArr[pnum]['synth_pname'],paramArr[pnum]['user_doc']) 
+                                pm.addMetaParam(pfName, paramArr[pnum]['synth_pname']+"_user_doc",paramArr[pnum]['user_doc']) 
+                                pm.addMetaParam(pfName, paramArr[pnum]['synth_pname']+"_synth_doc",barsynth.getParam(paramArr[pnum]["synth_pname"],"synth_doc"))
 
                         for pnum in range(len(fixedParams)):
                             pm.addParam(pfName, fixedParams[pnum]['synth_pname'], [0,MyConfig["soundDuration"]], [fixedParams[pnum]["synth_val"], fixedParams[pnum]["synth_val"]], units=fixedParams[pnum]['synth_units'], nvals=2, origUnits=None)
-                            pm.addMetaParam(pfName, fixedParams[pnum]['synth_pname'],fixedParams[pnum]['user_doc']) 
+                            pm.addMetaParam(pfName, fixedParams[pnum]['synth_pname']+"_user_doc",fixedParams[pnum]['user_doc']) 
+                            pm.addMetaParam(pfName, fixedParams[pnum]['synth_pname']+"_synth_doc",barsynth.getParam(fixedParams[pnum]["synth_pname"],"synth_doc"))
 
                                 #     # barsynth.getParam(paramArr[pnum]['synth_pname'], "min"), origMaxval=barsynth.getParam(paramArr[pnum]['synth_pname'], "max"))
                                 # if paramArr[pnum]["synth_units"] == "norm":
