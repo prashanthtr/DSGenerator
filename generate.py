@@ -108,7 +108,7 @@ def loadSoundModels(MyConfig):
     spec = importlib.util.spec_from_file_location(dirpath, os.path.join(dirpath,MyConfig["soundname"]+".py"))
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
-    soundModels[MyConfig["soundname"]] = mod
+    soundModels["sound"] = mod
     # mod_name = file[:-3]   # strip .py at the end
     # exec('from soundModels' + ' import ' + os.path.abspath(mod_name))
 
@@ -159,8 +159,10 @@ def generate(MyConfig):
 
     '''Set fixed parameters prior to the generation'''
     # print(soundModels[MyConfig["soundname"]].PatternSynth)
-    barsynth=soundModels[MyConfig["soundname"]].PatternSynth()
-
+    barsynthclass = getattr(soundModels["sound"],MyConfig["soundname"])
+    barsynth= barsynthclass()
+    print(barsynth)
+    
     for fixparams in fixedParams:
 
         if fixparams["synth_units"] == "norm":
