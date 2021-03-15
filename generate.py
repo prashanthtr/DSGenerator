@@ -15,7 +15,7 @@ os.chdir(script_path)
 sys.path.append(script_path)
 
 from parammanager import paramManager
-from sonyganformat import sonyGanJson
+from nsjsonmanager import nsjson
 #from Tf_record import tfrecordManager
 
 from genericsynth import synthInterface as SI
@@ -155,7 +155,7 @@ def generate(MyConfig):
     userParam = list(itertools.product(*userRange))
     synthParam = list(itertools.product(*synthRange))
 
-    sg = sonyGanJson.SonyGanJson(dirpath,outputpath, 1, 16000, MyConfig['soundname'])
+    sg = nsjson.nsJson(dirpath,outputpath, 1, 16000, MyConfig['soundname'])
 
     '''Set fixed parameters prior to the generation'''
     # print(soundModels[MyConfig["soundname"]].PatternSynth)
@@ -233,12 +233,12 @@ def generate(MyConfig):
                                 #         # "synth": "Synth maps in " + paramArr[pnum]["synth_units"] + " units from " + str(paramArr[pnum]['synth_minval']) + "->" + str(paramArr[pnum]['synth_maxval'])
                                 #         # })
 
-                    elif MyConfig["recordFormat"] == "sonyGan" or MyConfig["recordFormat"] == 1:
+                    elif MyConfig["recordFormat"] == "nsjson" or MyConfig["recordFormat"] == 1:
                         
                         sg.storeSingleRecord(wavName)
                         for pnum in range(len(paramArr)):
                             sg.addParams(wavName, paramArr[pnum]['synth_pname'], userP[pnum], barsynth.getParam(paramArr[pnum]['synth_pname']))
-                        sg.write2File("sonyGan.json")
+                        sg.write2File("nsjson.json")
                     
                     else:
                         print("Tfrecords")
