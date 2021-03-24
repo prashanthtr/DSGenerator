@@ -16,7 +16,7 @@ sys.path.append(script_path)
 
 from parammanager import paramManager
 from nsjsonmanager import nsjson
-#from Tf_record import tfrecordManager
+from tfrecordmanager import tfrecordManager
 
 from genericsynth import synthInterface as SI
 # from myDripPatternSynth import MyDripPatternSynth
@@ -241,6 +241,15 @@ def generate(MyConfig):
                         sg.write2File("nsjson.json")
                     
                     else:
+                        tfr=tfrecordManager.tfrecordManager(pfName, fileHandle.getFullPath(), [0,MyConfig["soundDuration"]], v)
+                        for pnum in range(len(paramArr)):
+                            # paramArr[pnum]['synth_units'], paramArr[pnum]['user_nvals'], paramArr[pnum]['user_minval'], paramArr[pnum]['user_maxval'], paramArr[pnum]['synth_minval'], paramArr[pnum]['synth_maxval']
+                            tfr.__addParam__(paramArr[pnum], userP[pnum])
+
+                        for pnum in range(len(fixedParams)):
+                            tfr.__addParam__(fixedParams[pnum], fixedParams[pnum]["synth_val"])
+
+                        tfr.__tfgenerate__()
                         print("Tfrecords")
                     '''write TF record'''
 
