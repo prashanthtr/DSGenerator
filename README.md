@@ -18,11 +18,25 @@ https://github.com/prashanthtr/popTextureDS
 		"soundDuration": Duration of total sound file (e.g., 4 seconds)
 		"recordFormat": Output format for parameter training (e.g., "params", "nsjson", "Tfrecords")
 
-### Datalabels for sounds in parameters
+### Datalabels
 
 The different parameters manipulating DSSynth classes provide the labels for sound space.
 Interpolation between parameter max and min values specify the granularity of sound space.
 The Max and Min values of parameters are described in Normalized(Norm) or Natural(Natural) ranges for interpolation.
+
+**Template for synth parameter(s)**
+
+            "user_pname": User Parameter Name
+            "user_minval": Minimum user value for parameter 
+            "user_maxval": Maximum user value of parameter
+            "user_nvals": Interpolation values
+            "user_doc": Freeform mapping expression
+            "synth_pname": Synth parameter name
+            "synth_minval": Minimum synth value for parameter
+            "synth_maxval": Maximum synth value for parameter
+            "synth_units": Natural or Normalized units
+
+**Example**
 
             "user_pname": "Irregularity",
             "user_minval": 0,
@@ -33,14 +47,6 @@ The Max and Min values of parameters are described in Normalized(Norm) or Natura
             "synth_minval": 0,
             "synth_maxval": 1,
             "synth_units": "natural"
-
-Examples:
-* Norm: Map from 0 to 1 to 400 to 600 in natural range
-* Natural: Map from 400 to 600 to 400 to 600 in natural range
-* Norm: Map from 0 to 1 to 0.4 to 0.6 which is 400 to 600 units in natural range.
-  * XX: ALl ranges have to be within the synth description
-  * XX: Use synthInterface to get ranges of current synth parameters.
-
 
 ## Dataset enumerator 
 
@@ -70,7 +76,7 @@ dataset generation.
 
 Clone the github repository:
 
-		git clone https://github.com/prashanthtr/DSGenerator
+		> git clone https://github.com/prashanthtr/DSGenerator
 
 
 ### Installation with DSSynth
@@ -84,5 +90,5 @@ Add the following line to the requirements of a DSSYnth collection:
 
 DSGenerator command-line usage for dataset generation 
 
-		python3 DSGenerator/generate.py --configfile config_file.json --outputpath MyPop
+		> python3 DSGenerator/generate.py --configfile config_file.json --outputpath MyPop
 
