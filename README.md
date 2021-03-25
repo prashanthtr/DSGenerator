@@ -12,11 +12,22 @@ https://github.com/prashanthtr/popTextureDS
 
 ### DSSynth class specs
 
+**Template for DSSynth class specs**
+
 		"soundname": Name of DSSynth class texture (E.g., PopPatternSynth/Engine_0001)
-		"samplerate": Sample rate of output audio files (Def. 16000)
-		"chunkSecs": Duration of audio files for training (E.g.,2 second)
-		"soundDuration": Duration of total sound file (e.g., 4 seconds)
+		"samplerate": Sample rate of output audio files.
+		"chunkSecs": Duration of audio files for training in seconds.
+		"soundDuration": Duration of total sound file in seconds.
 		"recordFormat": Output format for parameter training (e.g., "params", "nsjson", "Tfrecords")
+
+**Example**
+
+	"soundname": "PopPatternSynth",
+	"samplerate": 16000,
+	"chunkSecs": 2,
+	"soundDuration": 4,
+	"recordFormat": "nsjson",
+
 
 ### Datalabels
 
