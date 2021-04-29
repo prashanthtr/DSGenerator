@@ -241,7 +241,7 @@ def generate(MyConfig):
                         sg.write2File("nsjson.json")
                     
                     else:
-                        tfr=tfrecordManager.tfrecordManager(pfName, fileHandle.getFullPath(), [0,MyConfig["soundDuration"]], v)
+                        tfr=tfrecordManager.tfrecordManager(pfName, chunkedAudio, fileHandle.getFullPath(), [0,MyConfig["soundDuration"]], v)
                         for pnum in range(len(paramArr)):
                             # paramArr[pnum]['synth_units'], paramArr[pnum]['user_nvals'], paramArr[pnum]['user_minval'], paramArr[pnum]['user_maxval'], paramArr[pnum]['synth_minval'], paramArr[pnum]['synth_maxval']
                             tfr.__addParam__(paramArr[pnum], userP[pnum])
