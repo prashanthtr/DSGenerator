@@ -159,8 +159,6 @@ def generate(MyConfig):
     '''Total duration of the audio textures generated for this dataset'''
     totalDuration = len(userParam)*MyConfig["soundDuration"]
 
-    sg = nsjson.nsJson(dirpath,outputpath, 1, 16000, MyConfig['soundname'])
-
     '''Set fixed parameters prior to the generation'''
     # print(soundModels[MyConfig["soundname"]].PatternSynth)
     barsynthclass = getattr(soundModels["sound"],MyConfig["soundname"])
@@ -211,6 +209,8 @@ def enumerate( fileid, beg, end, userParam, synthParam, barsynth, paramArr, fixe
     soundDurations = []
     pfnames = []
     segmentNum = []
+
+    sg = nsjson.nsJson("/", MyConfig["outPath"], 1, MyConfig["samplerate"], MyConfig['soundname'])
 
     '''Enumerate parameters'''
     for index in range(beg, end): # iterating through a caretesian product of lists
