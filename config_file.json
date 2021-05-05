@@ -4,7 +4,9 @@
 	"samplerate": 16000,
 	"chunkSecs": 2,
 	"soundDuration": 4,
-	"recordFormat": "params",
+      "recordFormat": "tfrecords",
+      "tftype": "shards",
+      "shard_size": 2,
 	"params":
 	[
 		{
