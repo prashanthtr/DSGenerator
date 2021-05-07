@@ -210,7 +210,7 @@ def enumerate( fileid, beg, end, userParam, synthParam, barsynth, paramArr, fixe
     pfnames = []
     segmentNum = []
 
-    sg = nsjson.nsJson("/", MyConfig["outPath"], 1, MyConfig["samplerate"], MyConfig['soundname'])
+    sg = nsjson.nsJson("/", outputpath, 1, MyConfig["samplerate"], MyConfig['soundname'])
 
     '''Enumerate parameters'''
     for index in range(beg, end): # iterating through a caretesian product of lists
