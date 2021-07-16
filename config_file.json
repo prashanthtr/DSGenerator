@@ -35,7 +35,7 @@
 	"fixedParams":
 	[
 		{
-			"user_doc": "rate of Pop sounds",
+		"user_doc": "rate of Pop sounds",
             "synth_pname": "rate_exp",
             "synth_val": 2,
             "synth_units": "natural"

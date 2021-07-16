@@ -16,7 +16,7 @@ sys.path.append(script_path)
 
 from parammanager import paramManager
 from nsjsonmanager import nsjson
-from tfrecordmanager import tfrecordManager
+
 
 from genericsynth import synthInterface as SI
 # from myDripPatternSynth import MyDripPatternSynth
@@ -268,8 +268,10 @@ def enumerate( fileid, beg, end, userParam, synthParam, barsynth, paramArr, fixe
             
             elif MyConfig["recordFormat"] == "tfrecords":
 
-                if MyConfig["tftype"] == "single":
+                from tfrecordmanager import tfrecordManager
 
+                if MyConfig["tftype"] == "single":
+                    
                     '''Usage of tfrecords with single record per file'''                
                     tfr=tfrecordManager.tfrecordManager()
 
